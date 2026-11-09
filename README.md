@@ -14,7 +14,7 @@ byttenOS is an experimental x86-64 operating-system project. Its current boot fo
 | 0 | Stage 1, exactly 512 bytes |
 | 1 through N | Stage 2, padded to N 512-byte sectors |
 
-N is generated from the assembled Stage 2 byte length. Stage 1 loads Stage 2 at physical `0x8000` (`0000:8000`). The allocated Stage 2 region is `0x8000..0xFFFF` (32 KiB, at most 64 sectors), which does not overlap the boot sector at `0x7C00..0x7DFF`, the IVT, or the BIOS data area. Both stages use a real-mode stack with `SS=0`, `SP=0x7C00`, growing downward below the boot sector. The generated sector count is shared with Stage 1 through `build/layout.inc`; it is not maintained separately.
+N is generated from the assembled Stage 2 byte length. Stage 1 loads Stage 2 at physical `0x8000` (`0000:8000`). The allocated Stage 2 region is `0x8000..0xFFFF` (32 KiB, at most 64 sectors), which does not overlap the boot sector at `0x7C00..0x7DFF`, the IVT, or the BIOS data area. Both stages use a real-mode stack with `SS=0`, `SP=0x7C00`, growing downward below the boot sector. The generated sector count is assembled directly into Stage 1's DAP through `build/layout.inc`; the image builder verifies that the DAP matches the actual Stage 2 sector count.
 
 Stage 2 entry contract: `CS:IP = 0000:8000`, real mode, `DS=ES=FS=GS=SS=0`, `SP=0x7C00`, and `DL` contains the BIOS boot drive identifier. Stage 2 does not depend on other BIOS register values.
 
