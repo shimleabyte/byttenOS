@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Construct and validate the raw BIOS disk image."""
 import pathlib
+import struct
 import sys
 
 if len(sys.argv) != 5:
@@ -25,6 +26,12 @@ expected_bytes = f"STAGE2_BYTES equ {len(stage2)}"
 expected_sectors = f"STAGE2_SECTORS equ {sectors}"
 if expected_bytes not in layout_text or expected_sectors not in layout_text:
     raise SystemExit("error: generated loader layout disagrees with the Stage 2 binary")
+
+# Verify the assembled Stage 1 contains the matching 16-byte EDD DAP.
+expected_dap = struct.pack("<BBHHHQ", 0x10, 0, sectors, 0x8000, 0, 1)
+if stage1.count(expected_dap) != 1:
+    raise SystemExit("error: Stage 1 DAP does not match the generated Stage 2 disk layout")
+
 padded_stage2 = stage2.ljust(sectors * 512, b"\0")
 image = stage1 + padded_stage2
 image_path.parent.mkdir(parents=True, exist_ok=True)
