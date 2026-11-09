@@ -12,6 +12,7 @@ stage2_entry:
     mov gs, ax
     mov ss, ax
     mov sp, 0x7C00
+    cld
     sti
 
     ; Preserve the BIOS drive identifier passed by Stage 1.
