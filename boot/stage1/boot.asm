@@ -34,8 +34,7 @@ start:
     test cx, 0x0001
     jz disk_error
 
-    ; Read the exact padded Stage 2 sector count, derived at build time.
-    mov word [dap_sector_count], STAGE2_SECTORS
+    ; The generated layout fixes the DAP sector count at assembly time.
     mov si, disk_address_packet
     mov dl, [boot_drive]
     mov ah, 0x42
@@ -83,8 +82,7 @@ align 4
 disk_address_packet:
     db 0x10                 ; DAP size
     db 0x00                 ; reserved
-dap_sector_count:
-    dw 0                    ; populated from generated layout
+    dw STAGE2_SECTORS       ; generated from the assembled Stage 2 size
     dw STAGE2_LOAD_OFF      ; destination offset
     dw STAGE2_LOAD_SEG      ; destination segment
     dq 1                    ; first Stage 2 sector (LBA 1)
