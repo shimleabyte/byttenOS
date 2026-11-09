@@ -15,8 +15,11 @@ start:
     xor ax, ax
     mov ds, ax
     mov es, ax
+    mov fs, ax
+    mov gs, ax
     mov ss, ax
     mov sp, BOOT_STACK_TOP
+    cld
     sti
 
     mov [boot_drive], dl
